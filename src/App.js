@@ -16,7 +16,8 @@ class App extends Component {
       show: false,
       timezone: 'Timezone',
       summary: 'Add a new city.',
-      weekly: []
+      weekly: [],
+      hourly: []
     };
   }
 
@@ -61,9 +62,9 @@ class App extends Component {
     request
       .get(ENDPOINT)
       .then(response => {
-        console.log(response.body.daily.data);
         this.setState({
           weekly: response.body.daily.data,
+          hourly: response.body.hourly.data,
           timezone: response.body.timezone,
           summary: response.body.currently.summary
         });
@@ -96,7 +97,6 @@ class App extends Component {
       'cloudy': 'https://www.amcharts.com/wp-content/themes/amcharts2/css/img/icons/weather/animated/cloudy.svg',
       'fog': 'https://raw.githubusercontent.com/rickellis/SVG-Weather-Icons/7824dc80e8b35f651186a63c98c861e470deeed6/DarkSky/fog.svg'
     };
-
 
     return <img src={ icons[iconName] } />
   }
@@ -148,6 +148,30 @@ class App extends Component {
                   );
                 }) }
               </div>
+              <h5>Hourly</h5>
+              <table className=''>
+                <thead>
+                  <tr>
+                    <th>{ new Date().toLocaleString().split(',')[0] }</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  { this.state.hourly.map((hour, index) => {
+                    return (
+                      <tr>
+                        <td>
+                          <small>{ index + 1 }</small>
+                          <strong> { new Date(hour.time * 1000).getHours() }:00</strong>,
+                          { hour.temperature } ºF,
+                          <em>{ hour.summary.toLowerCase() }</em>,
+                          { hour.windSpeed } m/s,
+                          { hour.pressure }
+                        </td>
+                      </tr>
+                    );
+                  }) }
+                </tbody>
+              </table>
             </div>
           </section>
         </div>
